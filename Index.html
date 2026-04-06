@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paediatric BP Reference Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      margin-top: 0;
+      color: #1f3c88;
+      font-size: 28px;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #cfd8e3;
+      border-radius: 8px;
+      background: #fff;
+      box-sizing: border-box;
+    }
+
+    select:disabled {
+      background: #f0f0f0;
+      color: #888;
+      cursor: not-allowed;
+    }
+
+    .result-box {
+      margin-top: 25px;
+      padding: 20px;
+      background: #d6ecff;
+      border-radius: 10px;
+      color: #1f3c88;
+      font-weight: 500;
+    }
+
+    .table-container {
+      margin-top: 20px;
+      overflow-x: auto;
+      display: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #cfd8e3;
+      padding: 10px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    th {
+      background: #eef4ff;
+      font-weight: bold;
+    }
+
+    .highlight-row td {
+      background: #dff5df;
+    }
+
+    .highlight-cell {
+      background: #dff5df;
+    }
+
+    .reference-text {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #555;
+      text-align: left;
+    }
+
+    .table-title {
+      font-weight: bold;
+      color: #1f3c88;
+      margin-bottom: 8px;
+    }
+
+    #infantFemaleTable thead th,
+    #childrenFemaleTable thead th {
+      background: #ffd6e7 !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Paediatric BP Reference Tool</h1>
+
+    <div class="form-group">
+      <label for="ageGroup">Age group</label>
+      <select id="ageGroup" onchange="handleAgeGroupChange()" oninput="handleAgeGroupChange()">
+        <option value="">-- Select Age Group --</option>
+        <option value="neonates">Neonates</option>
+        <option value="infants">Infants (&lt;1 year old)</option>
+        <option value="children">Children &amp; Adolescents (1-15 years)</option>
+        <option value="adolescents16">Adolescents (&ge;16 years)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="ageDetails">Age Details</label>
+      <select id="ageDetails" disabled onchange="handleDependentChange()" oninput="handleDependentChange()">
+        <option value="">-- Select Age Details --</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="gender">Gender</label>
+      <select id="gender" disabled onchange="handleDependentChange()" oninput="handleDependentChange()">
+        <option value="">-- Select Gender --</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="heightPercentile">Height percentile</label>
+      <select id="heightPercentile" disabled onchange="handleDependentChange()" oninput="handleDependentChange()">
+        <option value="">-- Select Height Percentile --</option>
+        <option value="5th">5th</option>
+        <option value="10th">10th</option>
+        <option value="25th">25th</option>
+        <option value="50th">50th</option>
+        <option value="75th">75th</option>
+        <option value="90th">90th</option>
+        <option value="95th">95th</option>
+      </select>
+    </div>
+
+    <div class="result-box" id="bpResult">BP results will appear here</div>
+    <div style="font-size:12px; font-style:italic; color:#555; margin-top:6px;">Disclaimer: For reference purposes only; it should be verified before use.</div>
+    <div class="reference-text" id="adolescentRef"></div>
+
+    <div class="table-container" id="neonateTable">
+      <table>
+        <thead>
+          <tr>
+            <th>Age</th>
+            <th>50th</th>
+            <th>95th</th>
+            <th>99th</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>26 weeks</td><td>55/30 (38)</td><td>72/50 (57)</td><td>77/56 (63)</td></tr>
+          <tr><td>28 weeks</td><td>60/38 (45)</td><td>75/50 (58)</td><td>80/54 (63)</td></tr>
+          <tr><td>30 weeks</td><td>65/40 (48)</td><td>80/55 (63)</td><td>85/60 (68)</td></tr>
+          <tr><td>32 weeks</td><td>68/40 (49)</td><td>83/55 (64)</td><td>88/60 (69)</td></tr>
+          <tr><td>34 weeks</td><td>70/40 (50)</td><td>85/55 (65)</td><td>90/60 (70)</td></tr>
+          <tr><td>36 weeks</td><td>72/50 (57)</td><td>87/65 (72)</td><td>92/70 (77)</td></tr>
+          <tr><td>38 weeks</td><td>77/50 (59)</td><td>92/65 (74)</td><td>97/70 (79)</td></tr>
+          <tr><td>40 weeks</td><td>80/50 (60)</td><td>95/65 (75)</td><td>100/70 (80)</td></tr>
+          <tr><td>42 weeks</td><td>85/50 (62)</td><td>98/65 (76)</td><td>102/70 (81)</td></tr>
+          <tr><td>44 weeks</td><td>88/50 (63)</td><td>105/68 (80)</td><td>110/73 (85)</td></tr>
+        </tbody>
+      </table>
+      <div class="reference-text"><em>Dionne JM et al. Hypertension in infancy: diagnosis, management and outcome. Pediatric nephrology. 2012 Jan;27:17-32.</em></div>
+    </div>
+
+    <div class="table-container" id="infantMaleTable">
+      <table>
+        <thead>
+          <tr>
+            <th>Boys</th>
+            <th>50th</th>
+            <th>90th</th>
+            <th>95th</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1 month</td><td>85/52</td><td>101/65</td><td>105/68</td></tr>
+          <tr><td>2 months</td><td>91/50</td><td>106/63</td><td>110/67</td></tr>
+          <tr><td>3 months</td><td>91/50</td><td>106/63</td><td>110/67</td></tr>
+          <tr><td>4 months</td><td>91/50</td><td>106/63</td><td>110/68</td></tr>
+          <tr><td>5 months</td><td>91/52</td><td>105/65</td><td>110/69</td></tr>
+          <tr><td>6 months</td><td>91/53</td><td>105/66</td><td>110/70</td></tr>
+          <tr><td>7 months</td><td>91/54</td><td>105/67</td><td>110/71</td></tr>
+          <tr><td>8 months</td><td>91/55</td><td>105/68</td><td>110/72</td></tr>
+          <tr><td>9 months</td><td>91/56</td><td>105/68</td><td>110/73</td></tr>
+          <tr><td>10 months</td><td>91/56</td><td>105/69</td><td>110/73</td></tr>
+          <tr><td>11 months</td><td>91/56</td><td>105/69</td><td>110/74</td></tr>
+          <tr><td>12 months</td><td>91/57</td><td>105/69</td><td>110/74</td></tr>
+        </tbody>
+      </table>
+      <div class="reference-text"><em>Task Force on Blood Pressure Control in Children. Report of the second task force on blood pressure control in children—1987. Pediatrics. 1987 Jan 1;79(1):1-25.</em></div>
+    </div>
+
+    <div class="table-container" id="infantFemaleTable">
+      <table>
+        <thead>
+          <tr>
+            <th>Girls</th>
+            <th>50th</th>
+            <th>90th</th>
+            <th>95th</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1 month</td><td>84/52</td><td>98/65</td><td>103/69</td></tr>
+          <tr><td>2 months</td><td>87/51</td><td>101/64</td><td>106/68</td></tr>
+          <tr><td>3 months</td><td>89/51</td><td>104/64</td><td>108/68</td></tr>
+          <tr><td>4 months</td><td>90/52</td><td>105/65</td><td>109/69</td></tr>
+          <tr><td>5 months</td><td>91/52</td><td>106/65</td><td>110/69</td></tr>
+          <tr><td>6 months</td><td>92/53</td><td>106/66</td><td>110/69</td></tr>
+          <tr><td>7 months</td><td>92/53</td><td>106/66</td><td>110/70</td></tr>
+          <tr><td>8 months</td><td>92/53</td><td>106/66</td><td>110/70</td></tr>
+          <tr><td>9 months</td><td>92/54</td><td>106/67</td><td>110/71</td></tr>
+          <tr><td>10 months</td><td>92/54</td><td>106/67</td><td>110/71</td></tr>
+          <tr><td>11 months</td><td>92/54</td><td>105/67</td><td>110/71</td></tr>
+          <tr><td>12 months</td><td>92/55</td><td>105/67</td><td>110/71</td></tr>
+        </tbody>
+      </table>
+      <div class="reference-text"><em>Task Force on Blood Pressure Control in Children. Report of the second task force on blood pressure control in children—1987. Pediatrics. 1987 Jan 1;79(1):1-25.</em></div>
+    </div>
+
+    <div class="table-container" id="childrenMaleTable">
+      <div class="table-title">Gender: Male</div>
+      <table>
+        <thead>
+          <tr>
+            <th rowspan="2">Age</th>
+            <th rowspan="2">BP percentile</th>
+            <th colspan="7">Height percentile</th>
+          </tr>
+          <tr>
+            <th>5th</th>
+            <th>10th</th>
+            <th>25th</th>
+            <th>50th</th>
+            <th>75th</th>
+            <th>90th</th>
+            <th>95th</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1 year</td><td>90th</td><td>94/49</td><td>95/50</td><td>97/51</td><td>99/52</td><td>100/53</td><td>102/53</td><td>103/54</td></tr>
+          <tr><td>1 year</td><td>95th</td><td>98/54</td><td>99/54</td><td>101/55</td><td>103/56</td><td>104/57</td><td>106/58</td><td>106/58</td></tr>
+          <tr><td>1 year</td><td>99th</td><td>105/61</td><td>106/62</td><td>108/63</td><td>110/64</td><td>112/65</td><td>113/66</td><td>114/66</td></tr>
+          <tr><td>2 years</td><td>90th</td><td>97/54</td><td>99/55</td><td>100/56</td><td>102/57</td><td>104/58</td><td>105/58</td><td>106/59</td></tr>
+          <tr><td>2 years</td><td>95th</td><td>101/59</td><td>102/59</td><td>104/60</td><td>106/61</td><td>108/62</td><td>109/63</td><td>110/63</td></tr>
+          <tr><td>2 years</td><td>99th</td><td>109/66</td><td>110/67</td><td>111/68</td><td>113/69</td><td>115/70</td><td>117/71</td><td>117/71</td></tr>
+          <tr><td>3 years</td><td>90th</td><td>100/59</td><td>101/59</td><td>103/60</td><td>105/61</td><td>107/62</td><td>108/63</td><td>109/63</td></tr>
+          <tr><td>3 years</td><td>95th</td><td>104/63</td><td>105/63</td><td>107/64</td><td>109/65</td><td>110/66</td><td>112/67</td><td>113/67</td></tr>
+          <tr><td>3 years</td><td>99th</td><td>111/71</td><td>112/71</td><td>114/72</td><td>116/73</td><td>118/74</td><td>119/75</td><td>120/75</td></tr>
+          <tr><td>4 years</td><td>90th</td><td>102/62</td><td>103/63</td><td>105/64</td><td>107/65</td><td>109/66</td><td>110/66</td><td>111/67</td></tr>
+          <tr><td>4 years</td><td>95th</td><td>106/66</td><td>107/67</td><td>109/68</td><td>111/69</td><td>112/70</td><td>114/71</td><td>115/71</td></tr>
+          <tr><td>4 years</td><td>99th</td><td>113/74</td><td>114/75</td><td>116/76</td><td>118/77</td><td>120/78</td><td>121/78</td><td>122/79</td></tr>
+          <tr><td>5 years</td><td>90th</td><td>104/65</td><td>105/66</td><td>106/67</td><td>108/68</td><td>110/69</td><td>111/69</td><td>112/70</td></tr>
+          <tr><td>5 years</td><td>95th</td><td>108/69</td><td>109/70</td><td>110/71</td><td>112/72</td><td>114/73</td><td>115/74</td><td>116/74</td></tr>
+          <tr><td>5 years</td><td>99th</td><td>115/77</td><td>116/78</td><td>118/79</td><td>120/80</td><td>121/81</td><td>123/81</td><td>123/82</td></tr>
+          <tr><td>6 years</td><td>90th</td><td>105/68</td><td>106/68</td><td>108/69</td><td>110/70</td><td>111/71</td><td>113/72</td><td>113/72</td></tr>
+          <tr><td>6 years</td><td>95th</td><td>109/72</td><td>110/72</td><td>112/73</td><td>114/74</td><td>115/75</td><td>117/76</td><td>117/76</td></tr>
+          <tr><td>6 years</td><td>99th</td><td>116/80</td><td>117/80</td><td>119/81</td><td>121/82</td><td>123/83</td><td>124/84</td><td>125/84</td></tr>
+          <tr><td>7 years</td><td>90th</td><td>106/70</td><td>107/70</td><td>109/71</td><td>111/72</td><td>113/73</td><td>114/74</td><td>115/74</td></tr>
+          <tr><td>7 years</td><td>95th</td><td>110/74</td><td>111/74</td><td>113/75</td><td>115/76</td><td>117/77</td><td>118/78</td><td>119/78</td></tr>
+          <tr><td>7 years</td><td>99th</td><td>117/82</td><td>118/82</td><td>120/83</td><td>122/84</td><td>124/85</td><td>125/86</td><td>126/86</td></tr>
+          <tr><td>8 years</td><td>90th</td><td>107/71</td><td>109/72</td><td>110/72</td><td>112/73</td><td>114/74</td><td>115/75</td><td>116/76</td></tr>
+          <tr><td>8 years</td><td>95th</td><td>111/75</td><td>112/76</td><td>114/77</td><td>116/78</td><td>118/79</td><td>119/79</td><td>120/80</td></tr>
+          <tr><td>8 years</td><td>99th</td><td>119/83</td><td>120/84</td><td>122/85</td><td>123/86</td><td>125/87</td><td>127/87</td><td>127/88</td></tr>
+          <tr><td>9 years</td><td>90th</td><td>109/72</td><td>110/73</td><td>112/74</td><td>114/75</td><td>115/76</td><td>117/76</td><td>118/77</td></tr>
+          <tr><td>9 years</td><td>95th</td><td>113/76</td><td>114/77</td><td>116/78</td><td>118/79</td><td>119/80</td><td>121/81</td><td>121/81</td></tr>
+          <tr><td>9 years</td><td>99th</td><td>120/84</td><td>121/85</td><td>123/86</td><td>125/87</td><td>127/88</td><td>128/88</td><td>129/89</td></tr>
+          <tr><td>10 years</td><td>90th</td><td>111/73</td><td>112/73</td><td>114/74</td><td>115/75</td><td>117/76</td><td>119/77</td><td>119/78</td></tr>
+          <tr><td>10 years</td><td>95th</td><td>115/77</td><td>116/78</td><td>117/79</td><td>119/80</td><td>121/81</td><td>122/81</td><td>123/82</td></tr>
+          <tr><td>10 years</td><td>99th</td><td>122/85</td><td>123/86</td><td>125/86</td><td>127/88</td><td>128/88</td><td>130/89</td><td>130/90</td></tr>
+          <tr><td>11 years</td><td>90th</td><td>113/74</td><td>114/74</td><td>115/75</td><td>117/76</td><td>119/77</td><td>120/78</td><td>121/78</td></tr>
+          <tr><td>11 years</td><td>95th</td><td>117/78</td><td>118/78</td><td>119/79</td><td>121/80</td><td>123/81</td><td>124/82</td><td>125/82</td></tr>
+          <tr><td>11 years</td><td>99th</td><td>124/86</td><td>125/86</td><td>127/87</td><td>129/88</td><td>130/89</td><td>132/90</td><td>132/90</td></tr>
+          <tr><td>12 years</td><td>90th</td><td>115/74</td><td>116/75</td><td>118/75</td><td>120/76</td><td>121/77</td><td>123/78</td><td>123/79</td></tr>
+          <tr><td>12 years</td><td>95th</td><td>119/78</td><td>120/79</td><td>122/80</td><td>123/81</td><td>125/82</td><td>127/82</td><td>127/83</td></tr>
+          <tr><td>12 years</td><td>99th</td><td>126/86</td><td>127/87</td><td>129/88</td><td>131/89</td><td>133/90</td><td>134/90</td><td>135/91</td></tr>
+          <tr><td>13 years</td><td>90th</td><td>117/75</td><td>118/75</td><td>120/76</td><td>122/77</td><td>124/78</td><td>125/79</td><td>126/79</td></tr>
+          <tr><td>13 years</td><td>95th</td><td>121/79</td><td>122/79</td><td>124/80</td><td>126/81</td><td>128/82</td><td>129/83</td><td>130/83</td></tr>
+          <tr><td>13 years</td><td>99th</td><td>128/87</td><td>130/87</td><td>131/88</td><td>133/89</td><td>135/90</td><td>136/91</td><td>137/91</td></tr>
+          <tr><td>14 years</td><td>90th</td><td>120/75</td><td>121/76</td><td>123/77</td><td>125/78</td><td>126/79</td><td>128/79</td><td>128/80</td></tr>
+          <tr><td>14 years</td><td>95th</td><td>124/80</td><td>125/80</td><td>127/81</td><td>128/82</td><td>130/83</td><td>132/84</td><td>132/84</td></tr>
+          <tr><td>14 years</td><td>99th</td><td>131/87</td><td>132/88</td><td>134/89</td><td>136/90</td><td>138/91</td><td>139/92</td><td>140/92</td></tr>
+          <tr><td>15 years</td><td>90th</td><td>122/76</td><td>124/77</td><td>125/78</td><td>127/79</td><td>129/80</td><td>130/80</td><td>131/81</td></tr>
+          <tr><td>15 years</td><td>95th</td><td>126/81</td><td>127/81</td><td>129/82</td><td>131/83</td><td>133/84</td><td>134/85</td><td>135/85</td></tr>
+          <tr><td>15 years</td><td>99th</td><td>134/88</td><td>135/89</td><td>136/90</td><td>138/91</td><td>140/92</td><td>142/93</td><td>142/93</td></tr>
+        </tbody>
+      </table>
+      <div class="reference-text"><em>Lurbe E et al. 2016 European Society of Hypertension guidelines for the management of high blood pressure in children and adolescents. Journal of hypertension. 2016 Oct 1;34(10):1887-920.</em></div>
+    </div>
+
+    <div class="table-container" id="childrenFemaleTable">
+      <div class="table-title">Gender: Female</div>
+      <table>
+        <thead>
+          <tr>
+            <th rowspan="2">Age</th>
+            <th rowspan="2">BP percentile</th>
+            <th colspan="7">Height percentile</th>
+          </tr>
+          <tr>
+            <th>5th</th>
+            <th>10th</th>
+            <th>25th</th>
+            <th>50th</th>
+            <th>75th</th>
+            <th>90th</th>
+            <th>95th</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1 year</td><td>90th</td><td>97/52</td><td>97/53</td><td>98/53</td><td>100/54</td><td>101/55</td><td>102/55</td><td>103/56</td></tr>
+          <tr><td>1 year</td><td>95th</td><td>100/56</td><td>101/57</td><td>102/57</td><td>104/58</td><td>105/59</td><td>106/59</td><td>107/60</td></tr>
+          <tr><td>1 year</td><td>99th</td><td>108/64</td><td>108/64</td><td>109/65</td><td>111/65</td><td>112/66</td><td>113/67</td><td>114/67</td></tr>
+          <tr><td>2 years</td><td>90th</td><td>98/57</td><td>99/58</td><td>100/58</td><td>101/59</td><td>103/60</td><td>104/61</td><td>105/61</td></tr>
+          <tr><td>2 years</td><td>95th</td><td>102/61</td><td>103/62</td><td>104/62</td><td>105/63</td><td>107/64</td><td>108/65</td><td>109/65</td></tr>
+          <tr><td>2 years</td><td>99th</td><td>109/69</td><td>110/69</td><td>111/70</td><td>112/70</td><td>114/71</td><td>115/72</td><td>116/72</td></tr>
+          <tr><td>3 years</td><td>90th</td><td>100/61</td><td>100/62</td><td>102/62</td><td>103/63</td><td>104/64</td><td>106/64</td><td>106/65</td></tr>
+          <tr><td>3 years</td><td>95th</td><td>104/65</td><td>104/66</td><td>105/66</td><td>107/67</td><td>108/68</td><td>109/68</td><td>110/69</td></tr>
+          <tr><td>3 years</td><td>99th</td><td>111/73</td><td>111/73</td><td>113/74</td><td>114/74</td><td>115/75</td><td>116/76</td><td>117/76</td></tr>
+          <tr><td>4 years</td><td>90th</td><td>101/64</td><td>102/64</td><td>103/65</td><td>104/66</td><td>106/67</td><td>107/67</td><td>108/68</td></tr>
+          <tr><td>4 years</td><td>95th</td><td>105/68</td><td>106/68</td><td>107/69</td><td>108/70</td><td>110/71</td><td>111/71</td><td>112/72</td></tr>
+          <tr><td>4 years</td><td>99th</td><td>112/76</td><td>113/76</td><td>114/76</td><td>115/77</td><td>117/78</td><td>118/79</td><td>119/79</td></tr>
+          <tr><td>5 years</td><td>90th</td><td>103/66</td><td>103/67</td><td>105/67</td><td>106/68</td><td>107/69</td><td>109/69</td><td>109/70</td></tr>
+          <tr><td>5 years</td><td>95th</td><td>107/70</td><td>107/71</td><td>108/71</td><td>110/72</td><td>111/73</td><td>112/73</td><td>113/74</td></tr>
+          <tr><td>5 years</td><td>99th</td><td>114/78</td><td>114/78</td><td>116/79</td><td>117/79</td><td>118/80</td><td>120/81</td><td>120/81</td></tr>
+          <tr><td>6 years</td><td>90th</td><td>104/68</td><td>105/68</td><td>106/69</td><td>108/70</td><td>109/70</td><td>110/71</td><td>111/72</td></tr>
+          <tr><td>6 years</td><td>95th</td><td>108/72</td><td>109/72</td><td>110/73</td><td>111/74</td><td>113/74</td><td>114/75</td><td>115/76</td></tr>
+          <tr><td>6 years</td><td>99th</td><td>115/80</td><td>116/80</td><td>117/80</td><td>119/81</td><td>120/82</td><td>121/83</td><td>122/83</td></tr>
+          <tr><td>7 years</td><td>90th</td><td>106/69</td><td>107/70</td><td>108/70</td><td>109/71</td><td>111/72</td><td>112/72</td><td>113/73</td></tr>
+          <tr><td>7 years</td><td>95th</td><td>110/73</td><td>111/74</td><td>112/74</td><td>113/75</td><td>115/76</td><td>116/76</td><td>116/77</td></tr>
+          <tr><td>7 years</td><td>99th</td><td>117/81</td><td>118/81</td><td>119/82</td><td>120/82</td><td>122/83</td><td>123/84</td><td>124/84</td></tr>
+          <tr><td>8 years</td><td>90th</td><td>108/71</td><td>109/71</td><td>110/71</td><td>111/72</td><td>113/73</td><td>114/74</td><td>114/74</td></tr>
+          <tr><td>8 years</td><td>95th</td><td>112/75</td><td>112/75</td><td>114/75</td><td>115/76</td><td>116/77</td><td>118/78</td><td>118/78</td></tr>
+          <tr><td>8 years</td><td>99th</td><td>119/82</td><td>120/82</td><td>121/83</td><td>122/83</td><td>123/84</td><td>125/85</td><td>125/86</td></tr>
+          <tr><td>9 years</td><td>90th</td><td>110/72</td><td>110/72</td><td>112/72</td><td>113/73</td><td>114/74</td><td>116/75</td><td>116/75</td></tr>
+          <tr><td>9 years</td><td>95th</td><td>114/76</td><td>114/76</td><td>115/76</td><td>117/77</td><td>118/78</td><td>119/79</td><td>120/79</td></tr>
+          <tr><td>9 years</td><td>99th</td><td>121/83</td><td>121/83</td><td>123/84</td><td>124/84</td><td>125/85</td><td>127/86</td><td>127/87</td></tr>
+          <tr><td>10 years</td><td>90th</td><td>112/73</td><td>112/73</td><td>114/73</td><td>115/74</td><td>116/75</td><td>118/76</td><td>118/76</td></tr>
+          <tr><td>10 years</td><td>95th</td><td>116/77</td><td>116/77</td><td>117/77</td><td>119/78</td><td>120/79</td><td>121/80</td><td>122/80</td></tr>
+          <tr><td>10 years</td><td>99th</td><td>123/84</td><td>123/84</td><td>125/85</td><td>126/86</td><td>127/86</td><td>129/87</td><td>129/88</td></tr>
+          <tr><td>11 years</td><td>90th</td><td>114/74</td><td>114/74</td><td>116/74</td><td>117/75</td><td>118/76</td><td>119/77</td><td>120/77</td></tr>
+          <tr><td>11 years</td><td>95th</td><td>118/78</td><td>118/78</td><td>119/78</td><td>121/79</td><td>122/80</td><td>123/81</td><td>124/81</td></tr>
+          <tr><td>11 years</td><td>99th</td><td>125/85</td><td>125/85</td><td>126/86</td><td>128/87</td><td>129/87</td><td>130/88</td><td>131/89</td></tr>
+          <tr><td>12 years</td><td>90th</td><td>116/75</td><td>116/75</td><td>117/75</td><td>119/76</td><td>120/77</td><td>121/78</td><td>122/78</td></tr>
+          <tr><td>12 years</td><td>95th</td><td>119/79</td><td>120/79</td><td>121/79</td><td>123/80</td><td>124/81</td><td>125/82</td><td>126/82</td></tr>
+          <tr><td>12 years</td><td>99th</td><td>127/86</td><td>127/86</td><td>128/87</td><td>130/88</td><td>131/88</td><td>132/89</td><td>133/90</td></tr>
+          <tr><td>13 years</td><td>90th</td><td>117/76</td><td>118/76</td><td>119/76</td><td>121/77</td><td>122/78</td><td>123/79</td><td>124/79</td></tr>
+          <tr><td>13 years</td><td>95th</td><td>121/80</td><td>122/80</td><td>123/80</td><td>124/81</td><td>126/82</td><td>127/83</td><td>128/83</td></tr>
+          <tr><td>13 years</td><td>99th</td><td>128/87</td><td>129/87</td><td>130/88</td><td>132/89</td><td>133/89</td><td>134/90</td><td>135/91</td></tr>
+          <tr><td>14 years</td><td>90th</td><td>119/77</td><td>120/77</td><td>121/77</td><td>122/78</td><td>124/79</td><td>125/80</td><td>125/80</td></tr>
+          <tr><td>14 years</td><td>95th</td><td>123/81</td><td>123/81</td><td>125/81</td><td>126/82</td><td>127/83</td><td>129/84</td><td>129/84</td></tr>
+          <tr><td>14 years</td><td>99th</td><td>130/88</td><td>131/88</td><td>132/89</td><td>133/90</td><td>135/90</td><td>136/91</td><td>136/92</td></tr>
+          <tr><td>15 years</td><td>90th</td><td>120/78</td><td>121/78</td><td>122/78</td><td>123/79</td><td>125/80</td><td>126/81</td><td>127/81</td></tr>
+          <tr><td>15 years</td><td>95th</td><td>124/82</td><td>125/82</td><td>126/82</td><td>127/83</td><td>129/84</td><td>130/85</td><td>131/85</td></tr>
+          <tr><td>15 years</td><td>99th</td><td>131/89</td><td>132/89</td><td>133/90</td><td>134/91</td><td>136/91</td><td>137/92</td><td>138/93</td></tr>
+        </tbody>
+      </table>
+      <div class="reference-text"><em>Lurbe E et al. 2016 European Society of Hypertension guidelines for the management of high blood pressure in children and adolescents. Journal of hypertension. 2016 Oct 1;34(10):1887-920.</em></div>
+    </div>
+  </div>
+
+    <div style="text-align:center; font-size:12px; color:#666; margin-top:30px;">
+      by Dr Manson CI Kuok<br>
+      Version 1 - March 2026
+    </div>
+
+  <script>
+  (function () {
+    const ageGroup = document.getElementById('ageGroup');
+    const ageDetails = document.getElementById('ageDetails');
+    const gender = document.getElementById('gender');
+    const heightPercentile = document.getElementById('heightPercentile');
+    const bpResult = document.getElementById('bpResult');
+    const adolescentRef = document.getElementById('adolescentRef');
+
+    const ageOptions = {
+      neonates: ['26 weeks', '28 weeks', '30 weeks', '32 weeks', '34 weeks', '36 weeks', '38 weeks', '40 weeks', '42 weeks', '44 weeks'],
+      infants: ['1 month', '2 months', '3 months', '4 months', '5 months', '6 months', '7 months', '8 months', '9 months', '10 months', '11 months', '12 months'],
+      children: ['1 year', '2 years', '3 years', '4 years', '5 years', '6 years', '7 years', '8 years', '9 years', '10 years', '11 years', '12 years', '13 years', '14 years', '15 years'],
+      adolescents16: []
+    };
+
+    const neonateBPData = {
+      '26 weeks': { p50: '55/30 (38)', p95: '72/50 (57)', p99: '77/56 (63)' },
+      '28 weeks': { p50: '60/38 (45)', p95: '75/50 (58)', p99: '80/54 (63)' },
+      '30 weeks': { p50: '65/40 (48)', p95: '80/55 (63)', p99: '85/60 (68)' },
+      '32 weeks': { p50: '68/40 (49)', p95: '83/55 (64)', p99: '88/60 (69)' },
+      '34 weeks': { p50: '70/40 (50)', p95: '85/55 (65)', p99: '90/60 (70)' },
+      '36 weeks': { p50: '72/50 (57)', p95: '87/65 (72)', p99: '92/70 (77)' },
+      '38 weeks': { p50: '77/50 (59)', p95: '92/65 (74)', p99: '97/70 (79)' },
+      '40 weeks': { p50: '80/50 (60)', p95: '95/65 (75)', p99: '100/70 (80)' },
+      '42 weeks': { p50: '85/50 (62)', p95: '98/65 (76)', p99: '102/70 (81)' },
+      '44 weeks': { p50: '88/50 (63)', p95: '105/68 (80)', p99: '110/73 (85)' }
+    };
+
+    const infantMaleBPData = {
+      '1 month': { p50: '85/52', p90: '101/65', p95: '105/68' },
+      '2 months': { p50: '91/50', p90: '106/63', p95: '110/67' },
+      '3 months': { p50: '91/50', p90: '106/63', p95: '110/67' },
+      '4 months': { p50: '91/50', p90: '106/63', p95: '110/68' },
+      '5 months': { p50: '91/52', p90: '105/65', p95: '110/69' },
+      '6 months': { p50: '91/53', p90: '105/66', p95: '110/70' },
+      '7 months': { p50: '91/54', p90: '105/67', p95: '110/71' },
+      '8 months': { p50: '91/55', p90: '105/68', p95: '110/72' },
+      '9 months': { p50: '91/56', p90: '105/68', p95: '110/73' },
+      '10 months': { p50: '91/56', p90: '105/69', p95: '110/73' },
+      '11 months': { p50: '91/56', p90: '105/69', p95: '110/74' },
+      '12 months': { p50: '91/57', p90: '105/69', p95: '110/74' }
+    };
+
+    const infantFemaleBPData = {
+      '1 month': { p50: '84/52', p90: '98/65', p95: '103/69' },
+      '2 months': { p50: '87/51', p90: '101/64', p95: '106/68' },
+      '3 months': { p50: '89/51', p90: '104/64', p95: '108/68' },
+      '4 months': { p50: '90/52', p90: '105/65', p95: '109/69' },
+      '5 months': { p50: '91/52', p90: '106/65', p95: '110/69' },
+      '6 months': { p50: '92/53', p90: '106/66', p95: '110/69' },
+      '7 months': { p50: '92/53', p90: '106/66', p95: '110/70' },
+      '8 months': { p50: '92/53', p90: '106/66', p95: '110/70' },
+      '9 months': { p50: '92/54', p90: '106/67', p95: '110/71' },
+      '10 months': { p50: '92/54', p90: '106/67', p95: '110/71' },
+      '11 months': { p50: '92/54', p90: '105/67', p95: '110/71' },
+      '12 months': { p50: '92/55', p90: '105/67', p95: '110/71' }
+    };
+
+    function table(id) {
+      return document.getElementById(id);
+    }
+
+    function resetSelect(el, placeholder, options) {
+      el.innerHTML = '';
+      const first = document.createElement('option');
+      first.value = '';
+      first.textContent = placeholder;
+      el.appendChild(first);
+      (options || []).forEach(function (text) {
+        const opt = document.createElement('option');
+        opt.value = text;
+        opt.textContent = text;
+        el.appendChild(opt);
+      });
+    }
+
+    function clearHighlights(id) {
+      const t = table(id);
+      if (!t) return;
+      t.querySelectorAll('tr').forEach(function (row) {
+        row.classList.remove('highlight-row');
+      });
+      t.querySelectorAll('td').forEach(function (cell) {
+        cell.classList.remove('highlight-cell');
+      });
+    }
+
+    function clearAll() {
+      ['neonateTable', 'infantMaleTable', 'infantFemaleTable', 'childrenMaleTable', 'childrenFemaleTable'].forEach(function (id) {
+        const t = table(id);
+        if (t) t.style.display = 'none';
+        clearHighlights(id);
+      });
+      bpResult.textContent = 'BP results will appear here';
+      if (adolescentRef) adolescentRef.innerHTML = '';
+    }
+
+    function highlightRowByFirstCell(id, value) {
+      const t = table(id);
+      if (!t) return;
+      t.querySelectorAll('tbody tr').forEach(function (row) {
+        const firstCell = row.querySelector('td');
+        if (firstCell && firstCell.textContent.trim() === value) {
+          row.classList.add('highlight-row');
+        }
+      });
+    }
+
+    function updateChildren(id) {
+      const t = table(id);
+      if (!t || !ageDetails.value || !heightPercentile.value) return;
+      const colMap = { '5th': 2, '10th': 3, '25th': 4, '50th': 5, '75th': 6, '90th': 7, '95th': 8 };
+      const col = colMap[heightPercentile.value];
+      const vals = {};
+      t.querySelectorAll('tbody tr').forEach(function (row) {
+        const cells = row.querySelectorAll('td');
+        const rowAge = cells[0] ? cells[0].textContent.trim() : '';
+        const rowPct = cells[1] ? cells[1].textContent.trim() : '';
+        const value = cells[col] ? cells[col].textContent.trim() : '';
+        if (rowAge === ageDetails.value && value) {
+          vals[rowPct] = value;
+          if (rowPct === '90th' || rowPct === '95th' || rowPct === '99th') {
+            cells[col].classList.add('highlight-cell');
+          }
+        }
+      });
+      if (vals['90th'] && vals['95th'] && vals['99th']) {
+        bpResult.textContent = 'BP percentile: 90th: ' + vals['90th'] + ' ; 95th: ' + vals['95th'] + ' ; 99th: ' + vals['99th'];
+      }
+    }
+
+    function onAgeGroupChange() {
+      resetSelect(ageDetails, '-- Select Age Details --', ageOptions[ageGroup.value] || []);
+      ageDetails.disabled = !(ageOptions[ageGroup.value] && ageOptions[ageGroup.value].length);
+      gender.value = '';
+      gender.disabled = !(ageGroup.value === 'infants' || ageGroup.value === 'children');
+      heightPercentile.value = '';
+      heightPercentile.disabled = ageGroup.value !== 'children';
+      clearAll();
+
+      if (ageGroup.value === 'neonates') {
+        table('neonateTable').style.display = 'block';
+      }
+      if (ageGroup.value === 'adolescents16') {
+        bpResult.textContent = 'Normal: <130/85 ; High-normal: 130-139/85-89 ; Hypertension: ≥140/90 (Follow adult criteria)';
+        if (adolescentRef) {
+          adolescentRef.innerHTML = '<em>Lurbe E et al. 2016 European Society of Hypertension guidelines for the management of high blood pressure in children and adolescents. Journal of hypertension. 2016 Oct 1;34(10):1887-920.</em>';
+        }
+      }
+    }
+
+    function onAnyChange() {
+      clearAll();
+
+      if (ageGroup.value === 'neonates') {
+        table('neonateTable').style.display = 'block';
+        if (neonateBPData[ageDetails.value]) {
+          const bp = neonateBPData[ageDetails.value];
+          bpResult.textContent = 'BP percentile: 50th: ' + bp.p50 + ' ; 95th: ' + bp.p95 + ' ; 99th: ' + bp.p99;
+          highlightRowByFirstCell('neonateTable', ageDetails.value);
+        }
+        return;
+      }
+
+      if (ageGroup.value === 'infants') {
+        if (gender.value === 'male') {
+          table('infantMaleTable').style.display = 'block';
+          if (infantMaleBPData[ageDetails.value]) {
+            const bp = infantMaleBPData[ageDetails.value];
+            bpResult.textContent = 'BP percentile: 50th: ' + bp.p50 + ' ; 90th: ' + bp.p90 + ' ; 95th: ' + bp.p95;
+            highlightRowByFirstCell('infantMaleTable', ageDetails.value);
+          }
+        }
+        if (gender.value === 'female') {
+          table('infantFemaleTable').style.display = 'block';
+          if (infantFemaleBPData[ageDetails.value]) {
+            const bp = infantFemaleBPData[ageDetails.value];
+            bpResult.textContent = 'BP percentile: 50th: ' + bp.p50 + ' ; 90th: ' + bp.p90 + ' ; 95th: ' + bp.p95;
+            highlightRowByFirstCell('infantFemaleTable', ageDetails.value);
+          }
+        }
+        return;
+      }
+
+      if (ageGroup.value === 'children') {
+        if (gender.value === 'male') {
+          table('childrenMaleTable').style.display = 'block';
+          updateChildren('childrenMaleTable');
+        }
+        if (gender.value === 'female') {
+          table('childrenFemaleTable').style.display = 'block';
+          updateChildren('childrenFemaleTable');
+        }
+        return;
+      }
+
+      if (ageGroup.value === 'adolescents16') {
+        bpResult.textContent = 'Normal: <130/85 ; High-normal: 130-139/85-89 ; Hypertension: ≥140/90 (Follow adult criteria)';
+        if (adolescentRef) {
+          adolescentRef.innerHTML = '<em>Lurbe E et al. 2016 European Society of Hypertension guidelines for the management of high blood pressure in children and adolescents. Journal of hypertension. 2016 Oct 1;34(10):1887-920.</em>';
+        }
+      }
+    }
+
+    ageGroup.addEventListener('change', onAgeGroupChange);
+    ageDetails.addEventListener('change', onAnyChange);
+    gender.addEventListener('change', onAnyChange);
+    heightPercentile.addEventListener('change', onAnyChange);
+
+    window.handleAgeGroupChange = onAgeGroupChange;
+    window.handleDependentChange = onAnyChange;
+  })();
+  </script>
+</body>
+</html>
